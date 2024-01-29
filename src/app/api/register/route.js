@@ -7,8 +7,8 @@ export async function POST(req) {
   try {
     const body = await req.json()
     await mongoose.connect(process.env.MONGO_URL)
-
     const pass = body.password
+
     if (!pass?.length || pass.length < 5) {
       new Error('Password must be at least 5 characters')
     }

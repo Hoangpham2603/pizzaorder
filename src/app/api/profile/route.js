@@ -1,21 +1,24 @@
-import * as mongoose from 'mongoose'
-import { getServerSession } from 'next-auth/react'
+import mongoose from 'mongoose'
+import { getServerSession } from 'next-auth'
 import { authOptions } from '../auth/[...nextauth]/route'
+import { User } from '@/app/models/User'
 require('dotenv').config()
 
 export async function PUT(req) {
   try {
+    // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URL)
 
     const data = await req.json()
-    const session = await getServerSession(authOptions, req)
+    const session = await getServerSession(authOptions)
+    const email = session.user.email
 
     console.log({ session })
-    console.log('data123', data)
+
     if ('name' in data) {
       // Update username logic here
       // For example, assuming you have a User model:
-      // const user = await User.findOneAndUpdate({ _id: session.userId }, { name: data.name });
+      const user = await User.updateOne({ email }, { name: data.name })
     }
 
     return Response.json(true)
